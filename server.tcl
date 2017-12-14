@@ -107,7 +107,7 @@ proc ::remotemouseWebSocket::processMessage { msg } {
     set rt ""
     set processed 0
     
-    GidUtils::SetWarnLine "::remotemouseWebSocket::processMessage received $msg"
+    # GidUtils::SetWarnLine "::remotemouseWebSocket::processMessage received $msg"
 
     # needed for angular call set msg [lindex $msg 0]
     # cutre apaño para tirar adelente   
@@ -120,6 +120,10 @@ proc ::remotemouseWebSocket::processMessage { msg } {
 
     if {[lindex $msg 0] == "GiD_Process"} {
         eval $msg
+        set processed 1
+    }
+    if {[lindex $msg 0] == "Print"} {
+        GidUtils::SetWarnLine [lrange $msg 1 end]
         set processed 1
     }
     if {[lindex $msg 0] == "GiD_tcl"} {
@@ -188,3 +192,6 @@ proc toJSONformat { key value} {
     # and base64::encode returns several lines, so removing them
     return "{ \"key\": \"$key\", \"value\": \"[ regsub -all {\n} [ ::base64::encode $value] {} ]\"}"
 }
+
+
+

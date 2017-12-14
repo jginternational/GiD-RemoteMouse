@@ -2,8 +2,10 @@
 
 <head>
     <title>GiD Remote</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <script type="text/javascript">
+        var ws;
+
         // Variables for referencing the canvas and 2dcanvas context
         var canvas, ctx;
 
@@ -134,6 +136,38 @@
                 canvas.addEventListener('touchstart', sketchpad_touchStart, false);
                 canvas.addEventListener('touchmove', sketchpad_touchMove, false);
             }
+        }
+
+        if ("WebSocket" in window) {
+            console.log("WebSocket is supported by your Browser!");
+
+            // Let us open a web socket
+            ws = new WebSocket("ws://localhost:14789");
+
+            ws.onopen = function () {
+                // Web Socket is connected, send data using send()
+                ws.send('Print Bon día');
+                console.log("Message is sent...");
+            };
+
+            ws.onmessage = function (evt) {
+                var received_msg = evt.data;
+                console.log("Message is received...");
+            };
+
+            ws.onclose = function () {
+                // websocket is closed.
+                console.log("Connection is closed...");
+            };
+
+            window.onbeforeunload = function (event) {
+                socket.close();
+            };
+        }
+
+        else {
+            // The browser doesn't support WebSocket
+            alert("WebSocket NOT supported by your Browser!");
         }
     </script>
 
