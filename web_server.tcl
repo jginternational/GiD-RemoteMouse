@@ -76,7 +76,7 @@ proc web_server_start { } {
 	# HTTPD 9005 "" "" {mike:pwd you:yourpwd} {AuthRealm} {...}
     HTTPD $::server_port "" "" {} {AuthRealm} {
         "" {
-			set fd [open E:/[file join PROYECTOS GiD-RemoteMouse index.html] r]
+			set fd [open [file join [pwd] scripts gid_remote_control index.html] r]
 			set content [read $fd]; close $fd
 			respond $sock 200 $content
         }
@@ -88,7 +88,7 @@ wm state .gid normal
 set ::server_port 14788
 web_server_start
 
-source {E:\PROYECTOS\GiD-RemoteMouse\server.tcl}
+SRC {gid_remote_control\server.tcl}
 ::remotemouseWebSocket::setServerPort 14789
 ::remotemouseWebSocket::Start
-# -np- source {E:\PROYECTOS\GiD-RemoteMouse\web_server.tcl}
+# -np- SRC {gid_remote_control\web_server.tcl}
