@@ -82,13 +82,13 @@ proc web_server_start { } {
         }
     }    
 }
-GiD_Layers window close
-GiD_Groups window close
-wm state .gid normal
-set ::server_port 14788
-web_server_start
 
-SRC {gid_remote_control\server.tcl}
-::remotemouseWebSocket::setServerPort 14789
-::remotemouseWebSocket::Start
-# -np- SRC {gid_remote_control\web_server.tcl}
+proc remotemouse_web_server_init { } {
+	set ::server_port 14788
+	web_server_start
+
+	SRC {gid_remote_control\server.tcl}
+	::remotemouseWebSocket::setServerPort 14789
+	::remotemouseWebSocket::Start
+	# -np- SRC {gid_remote_control\web_server.tcl}
+}
