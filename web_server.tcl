@@ -80,6 +80,11 @@ proc web_server_start { } {
 			set content [read $fd]; close $fd
 			respond $sock 200 $content
         }
+		"*.js" {
+			set fd [open [file join [pwd] scripts gid_remote_control $req(path)] r]
+			set content [read $fd]; close $fd
+			respond $sock 200 $content
+		}
     }    
 }
 
