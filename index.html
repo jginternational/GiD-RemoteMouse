@@ -2,7 +2,8 @@
 
 <head>
     <title>GiD Remote</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/> <!--320-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0" />
+    <!--320-->
     <!-- <script src='https://cdnjs.cloudflare.com/ajax/libs/zingtouch/1.0.5/zingtouch.min.js'></script> -->
     <script type="text/javascript">
         var ws;
@@ -12,12 +13,14 @@
             console.log("WebSocket is supported by your Browser!");
 
             // Let us open a web socket
-            ws = new WebSocket("ws://localhost:14789");
+            ws = new WebSocket("ws://" + location.hostname + ":14789");
 
             ws.onopen = function () {
                 // Web Socket is connected, send data using send()
-                ws.send('Print Bon día');
-                console.log("Message is sent...");
+                setTimeout(function () {
+                    if (enviar('Print Bon día'))
+                        console.log("Message is sent...");
+                }, 1000);
             };
 
             ws.onmessage = function (evt) {
@@ -31,7 +34,7 @@
             };
 
             window.onbeforeunload = function (event) {
-                socket.close();
+                ws.close();
             };
         }
 
@@ -40,7 +43,12 @@
             alert("WebSocket NOT supported by your Browser!");
         }
 
-
+        function enviar(msg) {
+            if (ws.readyState == 1) {
+                ws.send('¬' + msg );
+                return true;
+            } else { return false; }
+        }
         /**
         * Provides requestAnimationFrame in a cross browser way.
         * @author greggman / https://greggman.com/
@@ -83,6 +91,9 @@
         var plateHeight = 400;
         var maxScale = 1.5;
         var minScale = 0.5
+
+        var prevX = 0;
+        var prevY = 0;
         function init() {
 
             plateContainer = document.getElementById('plateContainer');
@@ -139,7 +150,9 @@
             onAnimationFrame();
 
         };
-
+        function die() {
+            ws.close();
+        }
         function onAnimationFrame() {
 
             requestAnimationFrame(onAnimationFrame);
@@ -158,9 +171,19 @@
             if (posY < 0) posY = 0;
             else if (posY > containerHeight) posY = containerHeight;
 
+            posX = Math.round(posX * 100) / 100
+            posY = Math.round(posY * 100) / 100
+
             //set the transform
             plateContainer.style[prefixedTransform] = 'translate(' + posX + 'px,' + posY + 'px) rotate(' + currentRotation + 'deg) scale(' + currentScale + ') translateZ(0)';
-console.log('quepasaaqui')
+            if (posX !== prevX || posY !== prevY) {
+                console.log("X: " + posX + "\nY: " + posY)
+                var mX = (prevX < posX) ? 0.01 : (prevX > posX) ? -0.01 : 0.0;
+                var mY = (prevY < posY) ? -0.01 : (prevY > posY) ? 0.01 : 0.0;
+                prevX = posX;
+                prevY = posY;
+                enviar('GiD_Process \'pan leftmouse 0.0 0.0 leftmouse ' + mX + ' ' + mY);
+            }
             velocityX = velocityX * 0.8;
             velocityY = velocityY * 0.8;
 
@@ -352,14 +375,6 @@ console.log('quepasaaqui')
         }
     </script>
     <style>
-        .container {
-            background-color: gray;
-            width: 600px;
-            height: 400px;
-            -ms-touch-action: none;
-            ms-touch-action: none;
-        }
-
         .plateContainer {
             position: absolute;
             left: 0;
@@ -376,20 +391,11 @@ console.log('quepasaaqui')
     </style>
 </head>
 
-<body onLoad="init();" class="nomargin">
+<body onLoad="init();" onbeforeunload="die();" class="nomargin">
 
-    <div id="exampleContainer2" class="container">
-        <div>
-            <ul>
-                <li>Touch: One finger drag to move</li>
-                <li>Touch: Two finger gesture to rotate/scale.</li>
-                <li>Mouse: click and drag to move</li>
-                <li>Mouse: Shift key+Mouse click and drag to rotate/scale</li>
-            </ul>
-        </div>
-        <div id="plateContainer" class="plateContainer">
-            <canvas id="plateCanvas" width="400" height="400" class="plate"></canvas>
-        </div>
+    <div id="plateContainer" class="plateContainer">
+        <canvas id="plateCanvas" width="400" height="400" class="plate"></canvas>
+    </div>
     </div>
 
 

@@ -95,5 +95,5 @@ proc remotemouse_web_server_init { } {
 	SRC {gid_remote_control\server.tcl}
 	::remotemouseWebSocket::setServerPort 14789
 	::remotemouseWebSocket::Start
-	# -np- SRC {gid_remote_control\web_server.tcl}
+	# -np- SRC {gid_remote_control\web_server.tcl}; remotemouse_web_server_init
 }

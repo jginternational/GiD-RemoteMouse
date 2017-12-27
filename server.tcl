@@ -92,7 +92,7 @@ proc ::remotemouseWebSocket::WS_handler { sock type msg } {
 	    set message [::remotemouseWebSocket::processMessage [lindex [split $msg "¬"] end]]
 	    if {[llength $message]} {
 		# ::websocket::send $clSock text $message
-		    SendContent $message TEXT
+		    #SendContent $message TEXT
 	    }
 	}
 	cl* -
